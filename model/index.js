@@ -37,7 +37,7 @@ async function addContact(name, email, phone) {
 async function updateContact(params, contactId) {
   const data = await readFile(contactsPath);
   let index = null;
-  const contact = data.find((obj, indx) => {
+  let contact = data.find((obj, indx) => {
     if (String(obj.id) === contactId) {
       index = indx;
       return obj;
@@ -49,10 +49,7 @@ async function updateContact(params, contactId) {
     return false;
   }
 
-  for (const key in params) {
-    contact[key] = params[key];
-  }
-
+  contact = [...contact, ...params];
   data[index] = contact;
   await writeFile(contactsPath, data);
 
