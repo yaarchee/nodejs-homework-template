@@ -1,90 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-} = require("../../model/index");
+const ControllersContact = require("../../controllers/controllersContacts");
+const validate = require("../../utils/validationContact");
 
-router.get("/", async (req, res, next) => {
-  const data = await listContacts();
-  await res.json(data);
-});
+router.get("/", ControllersContact.getAllListContacts);
 
-router.get("/:contactId", async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const data = await getContactById(contactId);
+router.get("/:contactId", ControllersContact.getContactByID);
 
-    if (!data) {
-      await res
-        .status(404)
-        .json({ message: "Пользователь не найден", status: 404 });
-      return;
-    }
+router.post("/", validate.createContact, ControllersContact.createNewContact);
 
-    await res.json(data);
-  } catch (e) {
-    next(e);
-  }
-});
+router.delete("/:contactId", ControllersContact.deleteContact);
 
-router.post("/", async (req, res, next) => {
-  try {
-    console.log(req.body);
-    const { name, email, phone } = req.body;
-    if (!name || !email || !phone) {
-      await res
-        .status(400)
-        .json({ message: "Заполните поля" + "name, email, phone " });
-      return;
-    }
-    const data = await addContact(name, email, phone);
-    await res.status(201).json(data);
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.delete("/:contactId", async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const data = await removeContact(contactId);
-    if (!data) {
-      await res
-        .status(404)
-        .json({ message: "Пользователь не найден", status: 404 });
-      return;
-    }
-    await res.json(data);
-  } catch (e) {
-    next(e);
-  }
-});
-
-router.patch("/:contactId", async (req, res, next) => {
-  try {
-    const { contactId } = req.params;
-    const data = await updateContact(req.body, contactId);
-
-    if (!data) {
-      await res.status(404).json({
-        message: "Пользователь или данные для обневления не найдены",
-        status: 404,
-      });
-      return;
-    }
-
-    await res.json({
-      status: "success",
-      code: 200,
-      data: { data },
-    });
-  } catch (e) {
-    next(e);
-  }
-});
+router.patch(
+  "/:contactId",
+  validate.updateContact,
+  ControllersContact.updateContact
+);
 
 module.exports = router;
