@@ -2,7 +2,8 @@ const Contacts = require("../model/contacts");
 
 const getAllListContacts = async (req, res, next) => {
   try {
-    const contacts = await Contacts.listContacts();
+    const userId = req.user.id;
+    const contacts = await Contacts.listContacts(userId);
     return res.json({
       status: "success",
       code: 200,
@@ -17,8 +18,9 @@ const getAllListContacts = async (req, res, next) => {
 
 const getContactByID = async (req, res, next) => {
   try {
+    const userId = req.user.id;
     const { contactId } = req.params;
-    const contact = await Contacts.getContactById(contactId);
+    const contact = await Contacts.getContactById(contactId, userId);
 
     if (!contact) {
       await res
@@ -41,7 +43,8 @@ const getContactByID = async (req, res, next) => {
 
 const createNewContact = async (req, res, next) => {
   try {
-    const contact = await Contacts.addContact(req.body);
+    const userId = req.user.id;
+    const contact = await Contacts.addContact({ ...req.body, owner: userId });
     return res.status(201).json({
       status: "success",
       code: 201,
@@ -57,7 +60,8 @@ const createNewContact = async (req, res, next) => {
 const deleteContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const contact = await Contacts.removeContact(contactId);
+    const userId = req.user.id;
+    const contact = await Contacts.removeContact(contactId, userId);
     if (!contact) {
       await res
         .status(404)
@@ -79,7 +83,8 @@ const deleteContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const contact = await Contacts.updateContact(req.body, contactId);
+    const userId = req.user.id;
+    const contact = await Contacts.updateContact(req.body, contactId, userId);
 
     if (!contact) {
       await res.status(404).json({
