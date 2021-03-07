@@ -3,7 +3,9 @@ const Contacts = require("../model/contacts");
 const getAllListContacts = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const contacts = await Contacts.listContacts(userId);
+    console.log("getAllListContacts <<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+    console.log(req.query);
+    const contacts = await Contacts.listContacts(userId, req.query);
     return res.json({
       status: "success",
       code: 200,

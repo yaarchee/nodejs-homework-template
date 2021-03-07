@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
-const { HttpCode } = require("../utils/constants");
+const { HttpCode, SUBSCRIPTIONS } = require("../utils/constants");
 const Users = require("../model/users");
+
 require("dotenv").config();
 const SECRET_KEY = process.env.JWT_SECRET;
 
@@ -39,7 +40,7 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await Users.findByEmail(email);
-    if (!user || !user.validPassword(password)) {
+    if (!user || !(await user.validPassword(password))) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         status: "error",
         code: HttpCode.UNAUTHORIZED,
@@ -50,7 +51,7 @@ const login = async (req, res, next) => {
     const id = user._id;
     const payload = { id };
     console.log("tyt?");
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "2h" });
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "999h" });
     await Users.updateToken(id, token);
     return res.status(HttpCode.OK).json({
       status: "success",
@@ -82,4 +83,30 @@ const getInfoUser = async (req, res, next) => {
     },
   });
 };
-module.exports = { reg, login, logout, getInfoUser };
+
+const updateSubscriptionUser = async (req, res, next) => {
+  const { subscription } = req.body;
+  const id = req.user.id;
+  console.log("req.user");
+  if (!SUBSCRIPTIONS.includes(subscription)) {
+    return res.status(
+      HttpCode.BAD_REQUEST.json({
+        status: "Error subscription",
+        code: HttpCode.BAD_REQUEST,
+        data: {
+          subscription,
+        },
+      })
+    );
+  }
+  await Users.updateSubscription(id, subscription);
+  return res.status(HttpCode.OK).json({
+    status: "Update subscription success",
+    code: HttpCode.OK,
+    data: {
+      subscription,
+    },
+  });
+};
+
+module.exports = { reg, login, logout, getInfoUser, updateSubscriptionUser };

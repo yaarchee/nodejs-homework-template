@@ -1,8 +1,8 @@
 const Sex = {
-  MALE: 'm',
-  FEMALE: 'f',
-  NONE: 'none',
-}
+  MALE: "m",
+  FEMALE: "f",
+  NONE: "none",
+};
 
 const HttpCode = {
   OK: 200,
@@ -13,9 +13,12 @@ const HttpCode = {
   FORBIDDEN: 403,
   CONFLICT: 409,
   INTERNAL_SERVER_ERROR: 500,
-}
+};
+
+const SUBSCRIPTIONS = ["free", "pro", "premium"];
 
 module.exports = {
   Sex,
   HttpCode,
-}
+  SUBSCRIPTIONS,
+};
