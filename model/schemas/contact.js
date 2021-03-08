@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema, model, SchemaTypes } = mongoose;
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const contactSchema = new Schema(
   {
@@ -17,6 +18,11 @@ const contactSchema = new Schema(
       required: [true, "Set phone for contact"],
       unique: false,
     },
+    subscription: {
+      type: String,
+      enum: ["free", "pro", "premium"],
+      default: "free",
+    },
     owner: {
       type: SchemaTypes.ObjectId,
       ref: "user",
@@ -28,6 +34,8 @@ const contactSchema = new Schema(
 contactSchema.virtual("strNameAge").get(function () {
   return `${this.name}  ${this.phone}`;
 });
+
+contactSchema.plugin(mongoosePaginate);
 
 const Contact = model("contact", contactSchema);
 

@@ -12,13 +12,10 @@ const userSchema = new Schema(
       minlength: 2,
       default: "Guest",
     },
-    sex: {
+    subscription: {
       type: String,
-      enum: {
-        values: [Sex.MALE, Sex.FEMALE, Sex.NONE],
-        message: "It isn't allowed",
-      },
-      default: Sex.NONE,
+      enum: ["free", "pro", "premium"],
+      default: "free",
     },
     email: {
       type: String,
