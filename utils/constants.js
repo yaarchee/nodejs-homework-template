@@ -17,8 +17,11 @@ const HttpCode = {
 
 const SUBSCRIPTIONS = ["free", "pro", "premium"];
 
+const images = "images";
+
 module.exports = {
   Sex,
   HttpCode,
   SUBSCRIPTIONS,
+  images,
 };

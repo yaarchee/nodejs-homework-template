@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcryptjs");
+const gravatar = require("gravatar");
 
 const { Sex } = require("../../utils/constants");
 
@@ -34,7 +35,22 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    sex: {
+      type: String,
+      enum: {
+        values: [Sex.MALE, Sex.FEMALE, Sex.NONE],
+        message: "It isn't allowed",
+      },
+      default: Sex.NONE,
+    },
+    avatar: {
+      type: String,
+      default: function () {
+        return gravatar.url(this.email, { s: "250" }, true);
+      },
+    },
   },
+
   { versionKey: false, timestamps: true }
 );
 userSchema.pre("save", async function (next) {
